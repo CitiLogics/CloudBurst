@@ -1,15 +1,23 @@
 # CloudBurst
 A docker-based ensemble water distribution system simulation framework
 
-# Containers
-This project uses a few different container types:
+# Work in progress
+This is a work in progress. The goal is to have a docker-compose file that can be quickly and easily deployed to a properly configured swarm. All you have to bring is your analysis script.
 
+# Containers
+This project uses a few different container types, to be run on 2 different node types:
+
+Master Node:
 - Redis for job-queueing
-- SimulatorNode (EPANET) for running simulations
 - InfluxDB for collecting results
 - Grafana for visualization
+- Redis Queue Dashboard for visualizing worker node activity
 
-The project also uses a script for generating EPANET input files and sending the job descriptions to Redis.
+Swarm Nodes:
+- rq worker -> runs epanet simulation
+
+
+The project also uses a script for generating EPANET input files and sending the job descriptions to Redis. This script can be run from anywhere you have a Python interpreter.
 
 ```
 
@@ -47,8 +55,12 @@ The requirement for this service is that it receive a collection of job descript
 
 ```
 {
-  input: '/path/to/model_123.inp',
+  input: {
+    url: 'http://file-server:port/path/to/model_123.inp',
+    startTimeUtc: '2017-01-01T00:00:00Z'
+  },
   output: {
+    host: 'influx',
     db: 'influx_database_name',
     dbTag: 'simulation_id', // this tag will be appended to every series produced in this sim
     tag: 'sim-123', // unique identifier for this simulation

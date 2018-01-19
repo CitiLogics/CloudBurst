@@ -1,0 +1,81 @@
+# epanet ensemble simulation stack
+# sam@citilogics.com
+#
+#
+# - redis: serve the job queue
+# - fileStore: file store accessible to all workers
+# - worker: execute simulation, upload results
+# - redis-dashboard: visualize worker progress
+# - influx: collect results
+# - dash: visualize results
+#
+## TO_DO:
+## - finalize the deploy configuration (swarm mode)
+##
+
+version: '3'
+services:
+
+  queue:
+    container_name: "queue"
+    image: redis:3.2
+    restart: always
+    ports:
+      - 6379:6379
+
+  fileStore:
+    container_name: "fileStore"
+    image: nginx
+    restart: always
+    expose:
+      - 80
+    volumes:
+      - ./assets/fileStore:/usr/share/nginx/html:ro
+
+  dash:
+    container_name: "dash"
+    image: grafana/grafana:4.4.1
+    restart: always
+    ports:
+      - 3000:3000
+    links:
+      - influx
+    environment:
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_ADMIN_PASSWORD=whew.semi.amiably
+    volumes:
+      - dash:/var/lib/grafana
+
+  influx:
+    container_name: "influx"
+    image: influxdb:1.3.0
+    restart: always
+    expose:
+      - 8086
+    volumes:
+      - influx:/var/lib/influxdb
+
+  worker:
+    container_name: "worker"
+    build:
+      context: ./build
+      dockerfile: worker.dockerfile
+    restart: always
+    links:
+      - influx:db
+      - fileStore:fs
+    environment:
+      - FILE_HOST=fs
+      - REDIS_HOST=db
+
+
+  queue-dash:
+    container_name: "queue-dash"
+    image: robbieclarken/lightweight-rq-dashboard
+    restart: always
+    ports:
+      - 9181:9181
+
+volumes:
+  influx:
+  dash:
