@@ -17,14 +17,12 @@ version: '3'
 services:
 
   queue:
-    container_name: "queue"
     image: redis:3.2
     restart: always
     ports:
       - 6379:6379
 
   fileStore:
-    container_name: "fileStore"
     image: nginx
     restart: always
     expose:
@@ -33,8 +31,7 @@ services:
       - ./assets/fileStore:/usr/share/nginx/html:ro
 
   dash:
-    container_name: "dash"
-    image: grafana/grafana:4.4.1
+    image: grafana/grafana:4.6.3
     restart: always
     ports:
       - 3000:3000
@@ -47,7 +44,6 @@ services:
       - dash:/var/lib/grafana
 
   influx:
-    container_name: "influx"
     image: influxdb:1.3.0
     restart: always
     expose:
@@ -56,10 +52,8 @@ services:
       - influx:/var/lib/influxdb
 
   worker:
-    container_name: "worker"
     build:
-      context: ./build
-      dockerfile: worker.dockerfile
+      context: ./build/worker
     restart: always
     links:
       - influx:db
@@ -70,7 +64,6 @@ services:
 
 
   queue-dash:
-    container_name: "queue-dash"
     image: robbieclarken/lightweight-rq-dashboard
     restart: always
     ports:
