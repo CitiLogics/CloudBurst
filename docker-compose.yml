@@ -28,7 +28,7 @@ services:
     expose:
       - 80
     volumes:
-      - ./assets/fileStore:/usr/share/nginx/html:ro
+      - ./test/v_fileStore:/usr/share/nginx/html:ro
 
   dash:
     image: grafana/grafana:4.6.3
@@ -52,11 +52,9 @@ services:
       - influx:/var/lib/influxdb
 
   worker:
-    build:
-      context: ./build/worker
-    restart: always
+    image: openwateranalytics/epanet_worker
     links:
-      - influx:db
+      - queue:db
       - fileStore:fs
     environment:
       - FILE_HOST=fs
@@ -66,8 +64,11 @@ services:
   queue-dash:
     image: robbieclarken/lightweight-rq-dashboard
     restart: always
+    links:
+      - queue:db
     ports:
       - 9181:9181
+    command: -H db
 
 volumes:
   influx:
