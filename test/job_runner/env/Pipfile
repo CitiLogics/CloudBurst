@@ -17,7 +17,7 @@ influxdb = "*"
 rq = "*"
 requests = "*"
 redis = "*"
-
+requests = "*"
 
 [dev-packages]
 

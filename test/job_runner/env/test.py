@@ -46,7 +46,7 @@ while count < 10:
         'link': [['flowrate','101']]
     }
     }
-    job = q.enqueue('en_worker.work', params)
+    job = q.enqueue('en_worker.py', params)
     count += 1
 
 exit(0)
