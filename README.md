@@ -43,7 +43,7 @@ The project also needs you to run a script for generating EPANET input files and
 | |  files              |      |           |      |
 | |                     |      |           |      |
 | |  env.zip            |      |           |      |
-| |  [Pipfile,worker.py] |      |      +----+---+  |
+| | [Pipfile,worker.py] |      |      +----+---+  |
 | |                     |      |      | Influx |  |
 | +-------+-------------+      |      +----^---+  |
 |         |                    |           |      |
