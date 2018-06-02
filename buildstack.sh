@@ -10,12 +10,12 @@ blank(){
 blank 20
 
 echo "
-██████╗██╗      ██████╗ ██╗   ██╗██████╗ ██████╗ ██╗   ██╗██████╗ ███████╗████████╗
+ ██████╗██╗      ██████╗ ██╗   ██╗██████╗ ██████╗ ██╗   ██╗██████╗ ███████╗████████╗
 ██╔════╝██║     ██╔═══██╗██║   ██║██╔══██╗██╔══██╗██║   ██║██╔══██╗██╔════╝╚══██╔══╝
 ██║     ██║     ██║   ██║██║   ██║██║  ██║██████╔╝██║   ██║██████╔╝███████╗   ██║
 ██║     ██║     ██║   ██║██║   ██║██║  ██║██╔══██╗██║   ██║██╔══██╗╚════██║   ██║
 ╚██████╗███████╗╚██████╔╝╚██████╔╝██████╔╝██████╔╝╚██████╔╝██║  ██║███████║   ██║
-╚═════╝╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝
+ ╚═════╝╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝
 "
 blank 3
 
@@ -101,6 +101,11 @@ create(){
 
   # configure the shell to talk to master
   eval $(docker-machine env cloudburst-master)
+
+  # copy bind-mounted config files to manager
+  docker-machine ssh cloudburst-master mkdir grafana-provisioning
+  docker-machine scp -r grafana-provisioning/ cloudburst-master:/root/
+
   docker stack deploy -c docker-compose.yml cloudburst
   echo "Master IP is ${CBM_IP}"
   echo "Swarm token is ${SWARMTOKEN}"

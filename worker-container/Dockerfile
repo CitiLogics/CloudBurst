@@ -5,7 +5,7 @@
 ## - FILE_HOST: nginx host to serve the pipenv and any other files you may need
 ##
 ## you must make a zipped pipenv/job package available on:
-## http://${FILE_HOST}/env.zip
+## http://${FILE_HOST}:${FILE_HOST_PORT}?token=${FILE_HOST_TOKEN}/worker.zip
 ## and then submit job descriptions to the Queue.
 
 FROM python:3
